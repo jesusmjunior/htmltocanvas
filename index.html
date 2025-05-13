@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportador HTML para Imagem - Leilão CCF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .controls h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .format-selector {
+            margin-bottom: 20px;
+        }
+
+        .format-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .format-selector select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .preview-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .preview-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #canvas-preview {
+            max-width: 100%;
+            margin: 20px auto;
+            display: block;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Templates de Cards */
+        .template-container {
+            display: none;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        /* Template 1: Stories/Reels */
+        .stories-template {
+            width: 1080px;
+            height: 1920px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            position: relative;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .stories-content {
+            padding: 100px 50px;
+            color: white;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stories-logo {
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+
+        .stories-title {
+            font-size: 84px;
+            font-weight: bold;
+            color: #ffd700;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .stories-countdown {
+            background: #ff0000;
+            color: white;
+            padding: 30px 60px;
+            border-radius: 60px;
+            font-size: 48px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 30px auto;
+        }
+
+        .stories-cards {
+            margin: 40px 0;
+        }
+
+        .story-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            margin: 30px 0;
+            color: #333;
+        }
+
+        .story-card-title {
+            font-size: 42px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+
+        .story-card-price {
+            font-size: 56px;
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .stories-cta {
+            background: #25d366;
+            color: white;
+            padding: 40px 80px;
+            border-radius: 80px;
+            font-size: 48px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 40px;
+        }
+
+        /* Template 2: Post Quadrado */
+        .square-template {
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            position: relative;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .square-content {
+            padding: 80px;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .square-header {
+            text-align: center;
+        }
+
+        .square-logo {
+            font-size: 120px;
+            margin-bottom: 20px;
+        }
+
+        .square-title {
+            font-size: 96px;
+            font-weight: bold;
+            color: #ffd700;
+            text-transform: uppercase;
+            line-height: 1;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .square-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .square-item {
+            background: rgba(255,255,255,0.15);
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .square-price {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .square-name {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .square-size {
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        .square-url {
+            background: white;
+            color: #1e3c72;
+            padding: 30px 60px;
+            border-radius: 60px;
+            font-size: 42px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        /* Template 3: Banner Horizontal */
+        .banner-template {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            position: relative;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .banner-content {
+            padding: 60px;
+            color: white;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .banner-left {
+            flex: 1;
+        }
+
+        .banner-logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .banner-title {
+            font-size: 72px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .banner-subtitle {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .banner-right {
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .banner-item {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .banner-item-name {
+            font-size: 28px;
+        }
+
+        .banner-item-price {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .banner-cta {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .banner-url {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .banner-whatsapp {
+            font-size: 28px;
+            color: #25d366;
+        }
+
+        /* Ajustes responsivos para preview */
+        .preview-scale {
+            transform-origin: top left;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .info-box li:before {
+            content: "• ";
+            color: #2196f3;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <h1>🎨 Exportador de Cards - Leilão CCF</h1>
+            
+            <div class="format-selector">
+                <label for="template-select">Escolha o formato:</label>
+                <select id="template-select">
+                    <option value="stories">Stories/Reels (1080x1920)</option>
+                    <option value="square">Post Quadrado (1080x1080)</option>
+                    <option value="banner">Banner Horizontal (1200x630)</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="generatePreview()">
+                    👁️ Gerar Preview
+                </button>
+                <button class="btn-success" onclick="downloadAsImage('png')">
+                    📸 Baixar como PNG
+                </button>
+                <button class="btn-success" onclick="downloadAsImage('jpg')">
+                    📸 Baixar como JPG
+                </button>
+                <button class="btn-warning" onclick="copyToClipboard()">
+                    📋 Copiar para Área de Transferência
+                </button>
+            </div>
+
+            <div class="info-box">
+                <h3>ℹ️ Como usar:</h3>
+                <ul>
+                    <li>Escolha o formato desejado (Stories, Post ou Banner)</li>
+                    <li>Clique em "Gerar Preview" para visualizar</li>
+                    <li>Baixe como PNG (melhor qualidade) ou JPG (menor tamanho)</li>
+                    <li>Use "Copiar" para colar diretamente em apps</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="preview-container">
+            <div class="preview-title">📱 Preview do Card</div>
+            <div id="preview-area">
+                <p class="loading">Selecione um formato e clique em "Gerar Preview"</p>
+            </div>
+            <canvas id="canvas-preview" style="display: none;"></canvas>
+        </div>
+
+        <!-- Templates HTML -->
+        <div class="template-container" id="stories-template">
+            <div class="stories-template">
+                <div class="stories-content">
+                    <div>
+                        <div class="stories-logo">🏢</div>
+                        <h1 class="stories-title">MEGA LEILÃO</h1>
+                        <p style="font-size: 48px;">Centro Comercial Fabril</p>
+                        <div class="stories-countdown">⏰ 48 HORAS</div>
+                    </div>
+                    
+                    <div class="stories-cards">
+                        <div class="story-card">
+                            <h3 class="story-card-title">PONTO INTERNO</h3>
+                            <p class="story-card-price">R$ 800</p>
+                            <p style="font-size: 28px; color: #666;">45m² • Alto fluxo</p>
+                        </div>
+                        <div class="story-card">
+                            <h3 class="story-card-title">PONTO AVENIDA</h3>
+                            <p class="story-card-price">R$ 1.300</p>
+                            <p style="font-size: 28px; color: #666;">60m² • Vitrine ampla</p>
+                        </div>
+                        <div class="story-card">
+                            <h3 class="story-card-title">PONTO GRANDE</h3>
+                            <p class="story-card-price">R$ 1.800</p>
+                            <p style="font-size: 28px; color: #666;">80m² + expansão</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <a href="#" class="stories-cta">📱 CLIQUE AQUI</a>
+                        <p style="font-size: 32px; margin-top: 20px;">ccf-campanha.vercel.app</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="template-container" id="square-template">
+            <div class="square-template">
+                <div class="square-content">
+                    <div class="square-header">
+                        <div class="square-logo">🏢</div>
+                        <h1 class="square-title">MEGA LEILÃO</h1>
+                        <p style="font-size: 42px; margin-top: 20px;">Centro Comercial Fabril</p>
+                    </div>
+                    
+                    <div class="square-grid">
+                        <div class="square-item">
+                            <div class="square-price">R$ 800</div>
+                            <div class="square-name">PONTO INTERNO</div>
+                            <div class="square-size">45m²</div>
+                        </div>
+                        <div class="square-item">
+                            <div class="square-price">R$ 1.300</div>
+                            <div class="square-name">PONTO AVENIDA</div>
+                            <div class="square-size">60m²</div>
+                        </div>
+                        <div class="square-item">
+                            <div class="square-price">R$ 1.800</div>
+                            <div class="square-name">PONTO GRANDE</div>
+                            <div class="square-size">80m² + exp.</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div class="square-url">ccf-campanha.vercel.app</div>
+                        <p style="font-size: 36px; margin-top: 30px;">📱 (98) 8471-1808</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="template-container" id="banner-template">
+            <div class="banner-template">
+                <div class="banner-content">
+                    <div class="banner-left">
+                        <div class="banner-logo">🏢</div>
+                        <h1 class="banner-title">MEGA LEILÃO</h1>
+                        <p class="banner-subtitle">Centro Comercial Fabril</p>
+                        <p style="font-size: 42px; font-weight: bold; color: #ff0000;">⏰ 48 HORAS</p>
+                    </div>
+                    
+                    <div class="banner-right">
+                        <div class="banner-item">
+                            <span class="banner-item-name">PONTO INTERNO (45m²)</span>
+                            <span class="banner-item-price">R$ 800</span>
+                        </div>
+                        <div class="banner-item">
+                            <span class="banner-item-name">PONTO AVENIDA (60m²)</span>
+                            <span class="banner-item-price">R$ 1.300</span>
+                        </div>
+                        <div class="banner-item">
+                            <span class="banner-item-name">PONTO GRANDE (80m²)</span>
+                            <span class="banner-item-price">R$ 1.800</span>
+                        </div>
+                        
+                        <div class="banner-cta">
+                            <div class="banner-url">ccf-campanha.vercel.app</div>
+                            <div class="banner-whatsapp">📱 (98) 8471-1808</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTemplate = 'stories';
+        let generatedCanvas = null;
+
+        function generatePreview() {
+            const templateSelect = document.getElementById('template-select');
+            currentTemplate = templateSelect.value;
+            
+            // Esconde todos os templates
+            document.querySelectorAll('.template-container').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Mostra o template selecionado
+            const selectedTemplate = document.getElementById(`${currentTemplate}-template`);
+            selectedTemplate.style.display = 'block';
+            
+            // Mostra loading
+            const previewArea = document.getElementById('preview-area');
+            previewArea.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Gerando preview...</p>
+                </div>
+            `;
+            
+            // Gera o canvas
+            setTimeout(() => {
+                html2canvas(selectedTemplate.querySelector(`.${currentTemplate}-template`), {
+                    scale: 2, // Alta qualidade
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: null
+                }).then(canvas => {
+                    generatedCanvas = canvas;
+                    
+                    // Calcula o scale para o preview
+                    const maxWidth = 600;
+                    const scale = Math.min(maxWidth / canvas.width, 1);
+                    
+                    // Limpa a área de preview
+                    previewArea.innerHTML = '';
+                    
+                    // Adiciona o canvas com scale
+                    const previewCanvas = document.createElement('canvas');
+                    const ctx = previewCanvas.getContext('2d');
+                    
+                    previewCanvas.width = canvas.width * scale;
+                    previewCanvas.height = canvas.height * scale;
+                    
+                    ctx.scale(scale, scale);
+                    ctx.drawImage(canvas, 0, 0);
+                    
+                    previewCanvas.style.maxWidth = '100%';
+                    previewCanvas.style.height = 'auto';
+                    previewCanvas.style.display = 'block';
+                    previewCanvas.style.margin = '0 auto';
+                    previewCanvas.style.border = '2px solid #e5e7eb';
+                    previewCanvas.style.borderRadius = '8px';
+                    
+                    previewArea.appendChild(previewCanvas);
+                    
+                    // Esconde o template
+                    selectedTemplate.style.display = 'none';
+                });
+            }, 100);
+        }
+
+        function downloadAsImage(format) {
+            if (!generatedCanvas) {
+                alert('Por favor, gere um preview primeiro!');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = `leilao-ccf-${currentTemplate}.${format}`;
+            
+            if (format === 'jpg') {
+                // Cria um canvas com fundo branco para JPG
+                const jpgCanvas = document.createElement('canvas');
+                const ctx = jpgCanvas.getContext('2d');
+                jpgCanvas.width = generatedCanvas.width;
+                jpgCanvas.height = generatedCanvas.height;
+                
+                // Fundo branco
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, jpgCanvas.width, jpgCanvas.height);
+                
+                // Desenha a imagem
+                ctx.drawImage(generatedCanvas, 0, 0);
+                
+                link.href = jpgCanvas.toDataURL('image/jpeg', 0.95);
+            } else {
+                link.href = generatedCanvas.toDataURL('image/png');
+            }
+            
+            link.click();
+        }
+
+        function copyToClipboard() {
+            if (!generatedCanvas) {
+                alert('Por favor, gere um preview primeiro!');
+                return;
+            }
+            
+            generatedCanvas.toBlob(blob => {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(() => {
+                    alert('Imagem copiada para a área de transferência!');
+                }).catch(err => {
+                    console.error('Erro ao copiar:', err);
+                    alert('Erro ao copiar. Tente baixar a imagem ao invés.');
+                });
+            });
+        }
+
+        // Gera preview inicial
+        window.addEventListener('load', () => {
+            setTimeout(generatePreview, 500);
+        });
+    </script>
+</body>
+</html>
