@@ -1,0 +1,132 @@
+/* HTML to Canvas Converter Styles */
+
+/* Templates Section */
+.templates {
+    background: #2d2d2d;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.template-grid {
+    margin-top: 20px;
+}
+
+#template-select {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Preset Info Box */
+#preset-info {
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    color: #ccc;
+    line-height: 1.6;
+}
+
+#preset-info strong {
+    color: #00bfa5;
+}
+
+/* Download Section */
+#download-section {
+    display: inline-flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+/* Canvas Output */
+#canvas-output {
+    text-align: center;
+    padding: 20px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#canvas-output canvas {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Loading Overlay */
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#loading.active {
+    display: flex;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+/* Message Animations */
+.message {
+    animation: slideIn 0.3s ease;
+}
+
+.message.message-success {
+    background: #4caf50;
+}
+
+.message.message-error {
+    background: #f44336;
+}
+
+.message.message-info {
+    background: #2196f3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .template-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #download-section {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    #download-section button {
+        width: 100%;
+    }
+}
+
+/* Print styles */
+@media print {
+    .controls,
+    .templates,
+    .editor-panel,
+    .preview-header,
+    #loading {
+        display: none !important;
+    }
+    
+    #canvas-output canvas {
+        border: none;
+        box-shadow: none;
+    }
+}
