@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exportador HTML para Imagem - Leilão CCF</title>
+    <title>Conversor Universal HTML para Imagem</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
@@ -14,132 +14,311 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f0f0f0;
-            padding: 20px;
+            background: #1a1a1a;
+            color: #ffffff;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-        }
-
-        .controls {
-            background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 0;
+            border-bottom: 2px solid #333;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00bfa5, #00acc1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        /* Layout principal */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Editor de código */
+        .editor-panel {
+            background: #2d2d2d;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        .editor-header {
+            background: #1e1e1e;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+
+        .editor-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00bfa5;
+        }
+
+        .editor-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-button {
+            padding: 8px 16px;
+            background: transparent;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-button:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .tab-button.active {
+            background: #00bfa5;
+            color: #000;
+            border-color: #00bfa5;
+        }
+
+        .code-editor {
+            width: 100%;
+            min-height: 400px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            padding: 20px;
+            border: none;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .code-editor:focus {
+            outline: none;
+        }
+
+        /* Preview panel */
+        .preview-panel {
+            background: #2d2d2d;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        .preview-header {
+            background: #1e1e1e;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+
+        .preview-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00acc1;
+        }
+
+        .preview-content {
+            padding: 20px;
+            background: #ffffff;
+            min-height: 400px;
+            max-height: 600px;
+            overflow: auto;
+        }
+
+        #preview-frame {
+            width: 100%;
+            min-height: 400px;
+            border: none;
+            background: white;
+        }
+
+        /* Controles */
+        .controls {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .controls-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #00bfa5;
+        }
+
+        .control-group {
             margin-bottom: 20px;
         }
 
-        .controls h1 {
-            color: #333;
-            margin-bottom: 20px;
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 10px 15px;
+            background: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: #00bfa5;
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
         .button-group {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-top: 25px;
         }
 
-        button {
+        .btn {
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 1rem;
+            font-weight: 600;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-primary {
-            background: #2563eb;
+            background: linear-gradient(45deg, #00bfa5, #00acc1);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #1d4ed8;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 191, 165, 0.4);
         }
 
         .btn-success {
-            background: #22c55e;
+            background: #4caf50;
             color: white;
         }
 
         .btn-success:hover {
-            background: #16a34a;
+            background: #45a049;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
         }
 
         .btn-warning {
-            background: #f59e0b;
+            background: #ff9800;
             color: white;
         }
 
         .btn-warning:hover {
-            background: #d97706;
+            background: #e68900;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
         }
 
-        .format-selector {
-            margin-bottom: 20px;
+        .btn-info {
+            background: #2196f3;
+            color: white;
         }
 
-        .format-selector label {
+        .btn-info:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+
+        /* Canvas preview */
+        .canvas-preview {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .canvas-preview.active {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
         }
 
-        .format-selector select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        .preview-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .canvas-preview-header {
+            font-size: 1.2rem;
+            font-weight: 600;
             margin-bottom: 20px;
+            color: #00acc1;
         }
 
-        .preview-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        #canvas-preview {
+        #canvas-output {
             max-width: 100%;
-            margin: 20px auto;
-            display: block;
-            border: 2px solid #e5e7eb;
+            height: auto;
+            border: 2px solid #444;
             border-radius: 8px;
+            display: block;
+            margin: 0 auto;
         }
 
+        /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
-            font-size: 18px;
-            color: #666;
         }
 
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #2563eb;
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #00bfa5;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -147,561 +326,616 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Templates de Cards */
-        .template-container {
-            display: none;
-            width: fit-content;
-            margin: 0 auto;
-        }
-
-        /* Template 1: Stories/Reels */
-        .stories-template {
-            width: 1080px;
-            height: 1920px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            position: relative;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-
-        .stories-content {
-            padding: 100px 50px;
-            color: white;
-            text-align: center;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .stories-logo {
-            font-size: 100px;
+        /* Templates */
+        .templates {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 25px;
             margin-bottom: 30px;
         }
 
-        .stories-title {
-            font-size: 84px;
-            font-weight: bold;
-            color: #ffd700;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
-        }
-
-        .stories-countdown {
-            background: #ff0000;
-            color: white;
-            padding: 30px 60px;
-            border-radius: 60px;
-            font-size: 48px;
-            font-weight: bold;
-            display: inline-block;
-            margin: 30px auto;
-        }
-
-        .stories-cards {
-            margin: 40px 0;
-        }
-
-        .story-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 30px;
-            padding: 40px;
-            margin: 30px 0;
-            color: #333;
-        }
-
-        .story-card-title {
-            font-size: 42px;
-            font-weight: bold;
-            color: #1e3c72;
-            margin-bottom: 15px;
-        }
-
-        .story-card-price {
-            font-size: 56px;
-            font-weight: bold;
-            color: #22c55e;
-        }
-
-        .stories-cta {
-            background: #25d366;
-            color: white;
-            padding: 40px 80px;
-            border-radius: 80px;
-            font-size: 48px;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 40px;
-        }
-
-        /* Template 2: Post Quadrado */
-        .square-template {
-            width: 1080px;
-            height: 1080px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            position: relative;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-
-        .square-content {
-            padding: 80px;
-            color: white;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .square-header {
-            text-align: center;
-        }
-
-        .square-logo {
-            font-size: 120px;
+        .templates-header {
+            font-size: 1.2rem;
+            font-weight: 600;
             margin-bottom: 20px;
+            color: #00bfa5;
         }
 
-        .square-title {
-            font-size: 96px;
-            font-weight: bold;
-            color: #ffd700;
-            text-transform: uppercase;
-            line-height: 1;
-            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
-        }
-
-        .square-grid {
+        .template-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin: 40px 0;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .square-item {
-            background: rgba(255,255,255,0.15);
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 25px;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .square-price {
-            font-size: 48px;
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 10px;
-        }
-
-        .square-name {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .square-size {
-            font-size: 20px;
-            opacity: 0.8;
-        }
-
-        .square-url {
-            background: white;
-            color: #1e3c72;
-            padding: 30px 60px;
-            border-radius: 60px;
-            font-size: 42px;
-            font-weight: bold;
-            display: inline-block;
-            margin: 0 auto;
-        }
-
-        /* Template 3: Banner Horizontal */
-        .banner-template {
-            width: 1200px;
-            height: 630px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            position: relative;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-
-        .banner-content {
-            padding: 60px;
-            color: white;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .banner-left {
-            flex: 1;
-        }
-
-        .banner-logo {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        .banner-title {
-            font-size: 72px;
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-        }
-
-        .banner-subtitle {
-            font-size: 36px;
-            margin-bottom: 30px;
-        }
-
-        .banner-right {
-            background: rgba(255,255,255,0.1);
-            border-radius: 30px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
-        }
-
-        .banner-item {
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .banner-item-name {
-            font-size: 28px;
-        }
-
-        .banner-item-price {
-            font-size: 36px;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .banner-cta {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .banner-url {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .banner-whatsapp {
-            font-size: 28px;
-            color: #25d366;
-        }
-
-        /* Ajustes responsivos para preview */
-        .preview-scale {
-            transform-origin: top left;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
+        .template-card {
+            background: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 8px;
             padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
         }
 
-        .info-box h3 {
-            color: #1976d2;
+        .template-card:hover {
+            border-color: #00bfa5;
+            transform: translateY(-2px);
+        }
+
+        .template-icon {
+            font-size: 2rem;
             margin-bottom: 10px;
         }
 
-        .info-box ul {
-            list-style: none;
-            padding-left: 20px;
+        .template-name {
+            font-size: 0.95rem;
+            color: #aaa;
         }
 
-        .info-box li:before {
-            content: "• ";
-            color: #2196f3;
-            font-weight: bold;
-            margin-right: 10px;
+        /* Mensagens */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .message.success {
+            background: #4caf50;
+        }
+
+        .message.error {
+            background: #f44336;
+        }
+
+        .message.info {
+            background: #2196f3;
+        }
+
+        /* Código syntax highlighting básico */
+        .code-editor.html {
+            color: #e06c75;
+        }
+
+        .code-editor.css {
+            color: #56b6c2;
+        }
+
+        .code-editor.js {
+            color: #e5c07b;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="controls">
-            <h1>🎨 Exportador de Cards - Leilão CCF</h1>
-            
-            <div class="format-selector">
-                <label for="template-select">Escolha o formato:</label>
-                <select id="template-select">
-                    <option value="stories">Stories/Reels (1080x1920)</option>
-                    <option value="square">Post Quadrado (1080x1080)</option>
-                    <option value="banner">Banner Horizontal (1200x630)</option>
-                </select>
+        <header class="header">
+            <h1>🎨 Conversor Universal HTML para Imagem</h1>
+            <p>Cole seu código HTML/CSS/JS e exporte como PNG, JPG ou copie para área de transferência</p>
+        </header>
+
+        <!-- Templates pré-definidos -->
+        <div class="templates">
+            <div class="templates-header">📋 Templates Rápidos</div>
+            <div class="template-grid">
+                <div class="template-card" onclick="loadTemplate('simple')">
+                    <div class="template-icon">📄</div>
+                    <div class="template-name">Página Simples</div>
+                </div>
+                <div class="template-card" onclick="loadTemplate('card')">
+                    <div class="template-icon">🃏</div>
+                    <div class="template-name">Card Social</div>
+                </div>
+                <div class="template-card" onclick="loadTemplate('banner')">
+                    <div class="template-icon">🏷️</div>
+                    <div class="template-name">Banner</div>
+                </div>
+                <div class="template-card" onclick="loadTemplate('leilao')">
+                    <div class="template-icon">🏢</div>
+                    <div class="template-name">Leilão CCF</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout principal -->
+        <div class="main-layout">
+            <!-- Editor de código -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <div class="editor-title">Editor de Código</div>
+                    <div class="editor-tabs">
+                        <button class="tab-button active" onclick="switchTab('html')">HTML</button>
+                        <button class="tab-button" onclick="switchTab('css')">CSS</button>
+                        <button class="tab-button" onclick="switchTab('js')">JavaScript</button>
+                    </div>
+                </div>
+                <textarea id="html-editor" class="code-editor html" placeholder="Cole seu código HTML aqui..."></textarea>
+                <textarea id="css-editor" class="code-editor css" style="display: none;" placeholder="Cole seu código CSS aqui..."></textarea>
+                <textarea id="js-editor" class="code-editor js" style="display: none;" placeholder="Cole seu código JavaScript aqui..."></textarea>
             </div>
 
+            <!-- Preview -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <div class="preview-title">Preview em Tempo Real</div>
+                    <button class="btn btn-info" onclick="updatePreview()">
+                        🔄 Atualizar Preview
+                    </button>
+                </div>
+                <div class="preview-content">
+                    <iframe id="preview-frame"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="controls">
+            <div class="controls-header">⚙️ Configurações de Exportação</div>
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">Largura (px)</label>
+                    <input type="number" id="canvas-width" class="control-input" value="1080">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Altura (px)</label>
+                    <input type="number" id="canvas-height" class="control-input" value="1080">
+                </div>
+            </div>
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">Escala (1-5)</label>
+                    <input type="number" id="canvas-scale" class="control-input" value="2" min="1" max="5">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Formato</label>
+                    <select id="export-format" class="control-input">
+                        <option value="png">PNG (Melhor qualidade)</option>
+                        <option value="jpg">JPG (Menor tamanho)</option>
+                        <option value="webp">WebP (Moderno)</option>
+                    </select>
+                </div>
+            </div>
             <div class="button-group">
-                <button class="btn-primary" onclick="generatePreview()">
-                    👁️ Gerar Preview
+                <button class="btn btn-primary" onclick="generateCanvas()">
+                    🎨 Gerar Imagem
                 </button>
-                <button class="btn-success" onclick="downloadAsImage('png')">
-                    📸 Baixar como PNG
+                <button class="btn btn-success" onclick="downloadImage()">
+                    📥 Baixar Imagem
                 </button>
-                <button class="btn-success" onclick="downloadAsImage('jpg')">
-                    📸 Baixar como JPG
-                </button>
-                <button class="btn-warning" onclick="copyToClipboard()">
+                <button class="btn btn-warning" onclick="copyToClipboard()">
                     📋 Copiar para Área de Transferência
                 </button>
-            </div>
-
-            <div class="info-box">
-                <h3>ℹ️ Como usar:</h3>
-                <ul>
-                    <li>Escolha o formato desejado (Stories, Post ou Banner)</li>
-                    <li>Clique em "Gerar Preview" para visualizar</li>
-                    <li>Baixe como PNG (melhor qualidade) ou JPG (menor tamanho)</li>
-                    <li>Use "Copiar" para colar diretamente em apps</li>
-                </ul>
+                <button class="btn btn-info" onclick="reset()">
+                    🔄 Limpar Tudo
+                </button>
             </div>
         </div>
 
-        <div class="preview-container">
-            <div class="preview-title">📱 Preview do Card</div>
-            <div id="preview-area">
-                <p class="loading">Selecione um formato e clique em "Gerar Preview"</p>
-            </div>
-            <canvas id="canvas-preview" style="display: none;"></canvas>
-        </div>
-
-        <!-- Templates HTML -->
-        <div class="template-container" id="stories-template">
-            <div class="stories-template">
-                <div class="stories-content">
-                    <div>
-                        <div class="stories-logo">🏢</div>
-                        <h1 class="stories-title">MEGA LEILÃO</h1>
-                        <p style="font-size: 48px;">Centro Comercial Fabril</p>
-                        <div class="stories-countdown">⏰ 48 HORAS</div>
-                    </div>
-                    
-                    <div class="stories-cards">
-                        <div class="story-card">
-                            <h3 class="story-card-title">PONTO INTERNO</h3>
-                            <p class="story-card-price">R$ 800</p>
-                            <p style="font-size: 28px; color: #666;">45m² • Alto fluxo</p>
-                        </div>
-                        <div class="story-card">
-                            <h3 class="story-card-title">PONTO AVENIDA</h3>
-                            <p class="story-card-price">R$ 1.300</p>
-                            <p style="font-size: 28px; color: #666;">60m² • Vitrine ampla</p>
-                        </div>
-                        <div class="story-card">
-                            <h3 class="story-card-title">PONTO GRANDE</h3>
-                            <p class="story-card-price">R$ 1.800</p>
-                            <p style="font-size: 28px; color: #666;">80m² + expansão</p>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <a href="#" class="stories-cta">📱 CLIQUE AQUI</a>
-                        <p style="font-size: 32px; margin-top: 20px;">ccf-campanha.vercel.app</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="template-container" id="square-template">
-            <div class="square-template">
-                <div class="square-content">
-                    <div class="square-header">
-                        <div class="square-logo">🏢</div>
-                        <h1 class="square-title">MEGA LEILÃO</h1>
-                        <p style="font-size: 42px; margin-top: 20px;">Centro Comercial Fabril</p>
-                    </div>
-                    
-                    <div class="square-grid">
-                        <div class="square-item">
-                            <div class="square-price">R$ 800</div>
-                            <div class="square-name">PONTO INTERNO</div>
-                            <div class="square-size">45m²</div>
-                        </div>
-                        <div class="square-item">
-                            <div class="square-price">R$ 1.300</div>
-                            <div class="square-name">PONTO AVENIDA</div>
-                            <div class="square-size">60m²</div>
-                        </div>
-                        <div class="square-item">
-                            <div class="square-price">R$ 1.800</div>
-                            <div class="square-name">PONTO GRANDE</div>
-                            <div class="square-size">80m² + exp.</div>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <div class="square-url">ccf-campanha.vercel.app</div>
-                        <p style="font-size: 36px; margin-top: 30px;">📱 (98) 8471-1808</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="template-container" id="banner-template">
-            <div class="banner-template">
-                <div class="banner-content">
-                    <div class="banner-left">
-                        <div class="banner-logo">🏢</div>
-                        <h1 class="banner-title">MEGA LEILÃO</h1>
-                        <p class="banner-subtitle">Centro Comercial Fabril</p>
-                        <p style="font-size: 42px; font-weight: bold; color: #ff0000;">⏰ 48 HORAS</p>
-                    </div>
-                    
-                    <div class="banner-right">
-                        <div class="banner-item">
-                            <span class="banner-item-name">PONTO INTERNO (45m²)</span>
-                            <span class="banner-item-price">R$ 800</span>
-                        </div>
-                        <div class="banner-item">
-                            <span class="banner-item-name">PONTO AVENIDA (60m²)</span>
-                            <span class="banner-item-price">R$ 1.300</span>
-                        </div>
-                        <div class="banner-item">
-                            <span class="banner-item-name">PONTO GRANDE (80m²)</span>
-                            <span class="banner-item-price">R$ 1.800</span>
-                        </div>
-                        
-                        <div class="banner-cta">
-                            <div class="banner-url">ccf-campanha.vercel.app</div>
-                            <div class="banner-whatsapp">📱 (98) 8471-1808</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Canvas Preview -->
+        <div class="canvas-preview" id="canvas-preview">
+            <div class="canvas-preview-header">🖼️ Imagem Gerada</div>
+            <canvas id="canvas-output"></canvas>
         </div>
     </div>
 
     <script>
-        let currentTemplate = 'stories';
-        let generatedCanvas = null;
+        let currentTab = 'html';
+        let generatedBlob = null;
 
-        function generatePreview() {
-            const templateSelect = document.getElementById('template-select');
-            currentTemplate = templateSelect.value;
-            
-            // Esconde todos os templates
-            document.querySelectorAll('.template-container').forEach(el => {
-                el.style.display = 'none';
+        // Templates pré-definidos
+        const templates = {
+            simple: {
+                html: `<div style="padding: 20px; text-align: center;">
+    <h1>Olá Mundo!</h1>
+    <p>Este é um exemplo simples</p>
+</div>`,
+                css: `body {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    font-family: Arial, sans-serif;
+}
+h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}`,
+                js: ''
+            },
+            card: {
+                html: `<div class="card">
+    <div class="card-header">
+        <h2>Card Social</h2>
+    </div>
+    <div class="card-body">
+        <p>Conteúdo do card</p>
+    </div>
+</div>`,
+                css: `.card {
+    width: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.card-header {
+    background: #4CAF50;
+    color: white;
+    padding: 20px;
+}
+.card-body {
+    padding: 20px;
+}`,
+                js: ''
+            },
+            leilao: {
+                html: `<div class="leilao-card">
+    <div class="header">
+        <span class="logo">🏢</span>
+        <h1>MEGA LEILÃO</h1>
+        <p>Centro Comercial Fabril</p>
+        <div class="badge">48 HORAS</div>
+    </div>
+    <div class="items">
+        <div class="item">
+            <h3>PONTO INTERNO</h3>
+            <p class="price">R$ 800</p>
+            <p class="size">45m²</p>
+        </div>
+        <div class="item">
+            <h3>PONTO AVENIDA</h3>
+            <p class="price">R$ 1.300</p>
+            <p class="size">60m²</p>
+        </div>
+        <div class="item">
+            <h3>PONTO GRANDE</h3>
+            <p class="price">R$ 1.800</p>
+            <p class="size">80m² + exp.</p>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="url">ccf-campanha.vercel.app</p>
+        <p class="phone">📱 (98) 8471-1808</p>
+    </div>
+</div>`,
+                css: `.leilao-card {
+    width: 1080px;
+    height: 1080px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.header {
+    text-align: center;
+}
+.logo {
+    font-size: 100px;
+    display: block;
+    margin-bottom: 20px;
+}
+h1 {
+    font-size: 72px;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+.badge {
+    background: #ff0000;
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+.items {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+.item {
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    flex: 1;
+}
+.price {
+    font-size: 48px;
+    color: #ffd700;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.size {
+    font-size: 24px;
+    opacity: 0.8;
+}
+.footer {
+    text-align: center;
+}
+.url {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.phone {
+    font-size: 32px;
+}`,
+                js: ''
+            },
+            banner: {
+                html: `<div class="banner">
+    <h1>Seu Banner Aqui</h1>
+    <p>Subtítulo do banner</p>
+    <button>Call to Action</button>
+</div>`,
+                css: `.banner {
+    width: 1200px;
+    height: 630px;
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+h1 {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+p {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+button {
+    background: white;
+    color: #333;
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+}`,
+                js: ''
+            }
+        };
+
+        // Carregar template
+        function loadTemplate(templateName) {
+            const template = templates[templateName];
+            if (template) {
+                document.getElementById('html-editor').value = template.html;
+                document.getElementById('css-editor').value = template.css;
+                document.getElementById('js-editor').value = template.js;
+                updatePreview();
+                showMessage('Template carregado com sucesso!', 'success');
+            }
+        }
+
+        // Trocar abas
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.code-editor').forEach(editor => {
+                editor.style.display = 'none';
             });
             
-            // Mostra o template selecionado
-            const selectedTemplate = document.getElementById(`${currentTemplate}-template`);
-            selectedTemplate.style.display = 'block';
+            document.querySelector(`.tab-button:nth-child(${tab === 'html' ? 1 : tab === 'css' ? 2 : 3})`).classList.add('active');
+            document.getElementById(`${tab}-editor`).style.display = 'block';
+        }
+
+        // Atualizar preview
+        function updatePreview() {
+            const html = document.getElementById('html-editor').value;
+            const css = document.getElementById('css-editor').value;
+            const js = document.getElementById('js-editor').value;
             
-            // Mostra loading
-            const previewArea = document.getElementById('preview-area');
-            previewArea.innerHTML = `
+            const iframe = document.getElementById('preview-frame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            const fullHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            overflow: hidden;
+                        }
+                        ${css}
+                    </style>
+                </head>
+                <body>
+                    ${html}
+                    <script>
+                        ${js}
+                    </script>
+                </body>
+                </html>
+            `;
+            
+            iframeDoc.open();
+            iframeDoc.write(fullHTML);
+            iframeDoc.close();
+        }
+
+        // Gerar canvas
+        function generateCanvas() {
+            const width = parseInt(document.getElementById('canvas-width').value);
+            const height = parseInt(document.getElementById('canvas-height').value);
+            const scale = parseInt(document.getElementById('canvas-scale').value);
+            
+            // Criar um div temporário com o conteúdo
+            const tempDiv = document.createElement('div');
+            tempDiv.style.width = width + 'px';
+            tempDiv.style.height = height + 'px';
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
+            tempDiv.style.overflow = 'hidden';
+            tempDiv.style.background = 'white';
+            
+            // Adicionar estilos e HTML
+            const html = document.getElementById('html-editor').value;
+            const css = document.getElementById('css-editor').value;
+            const js = document.getElementById('js-editor').value;
+            
+            tempDiv.innerHTML = `
+                <style>
+                    ${css}
+                </style>
+                ${html}
+            `;
+            
+            document.body.appendChild(tempDiv);
+            
+            // Executar JavaScript se houver
+            if (js) {
+                try {
+                    eval(js);
+                } catch (error) {
+                    console.error('Erro no JavaScript:', error);
+                }
+            }
+            
+            // Mostrar loading
+            const canvasPreview = document.getElementById('canvas-preview');
+            canvasPreview.classList.add('active');
+            canvasPreview.innerHTML = `
+                <div class="canvas-preview-header">🖼️ Gerando Imagem...</div>
                 <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>Gerando preview...</p>
+                    <div class="spinner"></div>
+                    <p>Processando...</p>
                 </div>
             `;
             
-            // Gera o canvas
+            // Gerar canvas
             setTimeout(() => {
-                html2canvas(selectedTemplate.querySelector(`.${currentTemplate}-template`), {
-                    scale: 2, // Alta qualidade
+                html2canvas(tempDiv, {
+                    scale: scale,
+                    width: width,
+                    height: height,
                     useCORS: true,
                     logging: false,
-                    backgroundColor: null
+                    backgroundColor: '#ffffff'
                 }).then(canvas => {
-                    generatedCanvas = canvas;
+                    // Remover div temporário
+                    document.body.removeChild(tempDiv);
                     
-                    // Calcula o scale para o preview
-                    const maxWidth = 600;
-                    const scale = Math.min(maxWidth / canvas.width, 1);
+                    // Mostrar canvas
+                    canvasPreview.innerHTML = `
+                        <div class="canvas-preview-header">🖼️ Imagem Gerada</div>
+                    `;
+                    canvasPreview.appendChild(canvas);
+                    canvas.id = 'canvas-output';
                     
-                    // Limpa a área de preview
-                    previewArea.innerHTML = '';
+                    // Salvar blob para download
+                    canvas.toBlob(blob => {
+                        generatedBlob = blob;
+                    }, `image/${document.getElementById('export-format').value}`);
                     
-                    // Adiciona o canvas com scale
-                    const previewCanvas = document.createElement('canvas');
-                    const ctx = previewCanvas.getContext('2d');
-                    
-                    previewCanvas.width = canvas.width * scale;
-                    previewCanvas.height = canvas.height * scale;
-                    
-                    ctx.scale(scale, scale);
-                    ctx.drawImage(canvas, 0, 0);
-                    
-                    previewCanvas.style.maxWidth = '100%';
-                    previewCanvas.style.height = 'auto';
-                    previewCanvas.style.display = 'block';
-                    previewCanvas.style.margin = '0 auto';
-                    previewCanvas.style.border = '2px solid #e5e7eb';
-                    previewCanvas.style.borderRadius = '8px';
-                    
-                    previewArea.appendChild(previewCanvas);
-                    
-                    // Esconde o template
-                    selectedTemplate.style.display = 'none';
+                    showMessage('Imagem gerada com sucesso!', 'success');
+                }).catch(error => {
+                    console.error('Erro ao gerar canvas:', error);
+                    showMessage('Erro ao gerar imagem', 'error');
+                    document.body.removeChild(tempDiv);
                 });
             }, 100);
         }
 
-        function downloadAsImage(format) {
-            if (!generatedCanvas) {
-                alert('Por favor, gere um preview primeiro!');
+        // Baixar imagem
+        function downloadImage() {
+            if (!generatedBlob) {
+                showMessage('Gere uma imagem primeiro!', 'error');
                 return;
             }
+            
+            const format = document.getElementById('export-format').value;
+            const filename = `export-${Date.now()}.${format}`;
             
             const link = document.createElement('a');
-            link.download = `leilao-ccf-${currentTemplate}.${format}`;
-            
-            if (format === 'jpg') {
-                // Cria um canvas com fundo branco para JPG
-                const jpgCanvas = document.createElement('canvas');
-                const ctx = jpgCanvas.getContext('2d');
-                jpgCanvas.width = generatedCanvas.width;
-                jpgCanvas.height = generatedCanvas.height;
-                
-                // Fundo branco
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, jpgCanvas.width, jpgCanvas.height);
-                
-                // Desenha a imagem
-                ctx.drawImage(generatedCanvas, 0, 0);
-                
-                link.href = jpgCanvas.toDataURL('image/jpeg', 0.95);
-            } else {
-                link.href = generatedCanvas.toDataURL('image/png');
-            }
-            
+            link.href = URL.createObjectURL(generatedBlob);
+            link.download = filename;
             link.click();
+            
+            showMessage('Download iniciado!', 'success');
         }
 
+        // Copiar para área de transferência
         function copyToClipboard() {
-            if (!generatedCanvas) {
-                alert('Por favor, gere um preview primeiro!');
+            const canvas = document.getElementById('canvas-output');
+            if (!canvas) {
+                showMessage('Gere uma imagem primeiro!', 'error');
                 return;
             }
             
-            generatedCanvas.toBlob(blob => {
+            canvas.toBlob(blob => {
                 const item = new ClipboardItem({ 'image/png': blob });
                 navigator.clipboard.write([item]).then(() => {
-                    alert('Imagem copiada para a área de transferência!');
+                    showMessage('Imagem copiada para a área de transferência!', 'success');
                 }).catch(err => {
                     console.error('Erro ao copiar:', err);
-                    alert('Erro ao copiar. Tente baixar a imagem ao invés.');
+                    showMessage('Erro ao copiar. Tente baixar a imagem.', 'error');
                 });
             });
         }
 
-        // Gera preview inicial
-        window.addEventListener('load', () => {
-            setTimeout(generatePreview, 500);
+        // Limpar tudo
+        function reset() {
+            document.getElementById('html-editor').value = '';
+            document.getElementById('css-editor').value = '';
+            document.getElementById('js-editor').value = '';
+            document.getElementById('canvas-preview').classList.remove('active');
+            updatePreview();
+            generatedBlob = null;
+            showMessage('Tudo limpo!', 'info');
+        }
+
+        // Mostrar mensagem
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        // Auto-update preview em tempo real
+        let updateTimeout;
+        document.querySelectorAll('.code-editor').forEach(editor => {
+            editor.addEventListener('input', () => {
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(updatePreview, 500);
+            });
         });
+
+        // Inicializar
+        updatePreview();
     </script>
 </body>
 </html>
