@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards Sociais - Leilão CCF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .card-section {
+            margin-bottom: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card-section h3 {
+            margin-bottom: 20px;
+            color: #2563eb;
+        }
+
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Card Instagram/Facebook Quadrado */
+        .instagram-card {
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px;
+        }
+
+        .instagram-header {
+            text-align: center;
+            color: white;
+        }
+
+        .logo-big {
+            font-size: 120px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            font-size: 96px;
+            font-weight: bold;
+            color: #ffd700;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 42px;
+            margin-bottom: 30px;
+        }
+
+        .countdown-badge {
+            background: #ff0000;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 48px;
+            font-weight: bold;
+            display: inline-block;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .properties-instagram {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .property-instagram {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            flex: 1;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .property-instagram h4 {
+            font-size: 32px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .price-instagram {
+            font-size: 56px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .size-instagram {
+            font-size: 28px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .instagram-footer {
+            text-align: center;
+            color: white;
+        }
+
+        .website-instagram {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .whatsapp-instagram {
+            font-size: 42px;
+            color: #25d366;
+        }
+
+        /* WhatsApp Story */
+        .whatsapp-story {
+            width: 1080px;
+            height: 1920px;
+            background: linear-gradient(to bottom, #25d366, #128c7e);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 100px 60px;
+            color: white;
+        }
+
+        .whatsapp-header {
+            text-align: center;
+        }
+
+        .whatsapp-title {
+            font-size: 84px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .story-properties {
+            margin: 60px 0;
+        }
+
+        .story-property {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .story-property h4 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .story-price {
+            font-size: 64px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .story-size {
+            font-size: 32px;
+        }
+
+        .story-footer {
+            text-align: center;
+        }
+
+        .story-cta {
+            background: white;
+            color: #25d366;
+            padding: 40px 80px;
+            border-radius: 80px;
+            font-size: 48px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        /* Facebook Banner */
+        .facebook-banner {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            align-items: center;
+            padding: 60px;
+            color: white;
+        }
+
+        .banner-left {
+            flex: 1;
+        }
+
+        .banner-logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .banner-title {
+            font-size: 72px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .banner-subtitle {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .banner-badge {
+            background: #ff0000;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-size: 32px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .banner-right {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            margin-left: 40px;
+        }
+
+        .banner-property {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .banner-property:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .banner-property-name {
+            font-size: 28px;
+        }
+
+        .banner-property-price {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .banner-contact {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .banner-website {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .banner-whatsapp {
+            font-size: 24px;
+            color: #25d366;
+        }
+
+        /* Download buttons */
+        .download-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .download-btn {
+            background: #2563eb;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Responsive adjustments */
+        .scale-container {
+            transform: scale(0.3);
+            transform-origin: center;
+            margin: -360px 0;
+        }
+
+        @media (max-width: 768px) {
+            .scale-container {
+                transform: scale(0.2);
+                margin: -432px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Cards para Redes Sociais - Leilão CCF</h2>
+
+        <!-- Instagram/Facebook Post Quadrado -->
+        <div class="card-section">
+            <h3>Instagram/Facebook - Post Quadrado (1080x1080)</h3>
+            <div class="preview-container">
+                <div class="scale-container">
+                    <div class="instagram-card" id="instagram-card">
+                        <div class="instagram-header">
+                            <div class="logo-big">🏢</div>
+                            <h1 class="main-title">MEGA LEILÃO</h1>
+                            <p class="subtitle">Centro Comercial Fabril</p>
+                            <div class="countdown-badge">⏰ 48 HORAS</div>
+                        </div>
+
+                        <div class="properties-instagram">
+                            <div class="property-instagram">
+                                <h4>PONTO INTERNO</h4>
+                                <p class="price-instagram">R$ 800</p>
+                                <p class="size-instagram">15m²</p>
+                            </div>
+                            <div class="property-instagram">
+                                <h4>PONTO AVENIDA</h4>
+                                <p class="price-instagram">R$ 1.300</p>
+                                <p class="size-instagram">30m²</p>
+                            </div>
+                            <div class="property-instagram">
+                                <h4>PONTO GRANDE</h4>
+                                <p class="price-instagram">R$ 1.800</p>
+                                <p class="size-instagram">45m² + exp.</p>
+                            </div>
+                        </div>
+
+                        <div class="instagram-footer">
+                            <p class="website-instagram">ccf-campanha.vercel.app</p>
+                            <p class="whatsapp-instagram">📱 (98) 8471-1808</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="download-section">
+                <a href="#" class="download-btn" onclick="downloadCard('instagram-card', 'instagram')">Baixar PNG</a>
+                <a href="#" class="download-btn" onclick="downloadCard('instagram-card', 'instagram', 'jpg')">Baixar JPG</a>
+            </div>
+        </div>
+
+        <!-- WhatsApp Story -->
+        <div class="card-section">
+            <h3>WhatsApp Status (1080x1920)</h3>
+            <div class="preview-container">
+                <div class="scale-container">
+                    <div class="whatsapp-story" id="whatsapp-story">
+                        <div class="whatsapp-header">
+                            <div class="logo-big">🏢</div>
+                            <h1 class="whatsapp-title">MEGA LEILÃO</h1>
+                            <p class="subtitle">Centro Comercial Fabril</p>
+                            <div class="countdown-badge">⏰ 48 HORAS</div>
+                        </div>
+
+                        <div class="story-properties">
+                            <div class="story-property">
+                                <h4>PONTO INTERNO</h4>
+                                <p class="story-price">R$ 800</p>
+                                <p class="story-size">15m²</p>
+                            </div>
+                            <div class="story-property">
+                                <h4>PONTO AVENIDA</h4>
+                                <p class="story-price">R$ 1.300</p>
+                                <p class="story-size">30m²</p>
+                            </div>
+                            <div class="story-property">
+                                <h4>PONTO GRANDE</h4>
+                                <p class="story-price">R$ 1.800</p>
+                                <p class="story-size">45m² + expansão</p>
+                            </div>
+                        </div>
+
+                        <div class="story-footer">
+                            <div class="story-cta">CLIQUE AQUI</div>
+                            <p class="website-instagram">ccf-campanha.vercel.app</p>
+                            <p class="whatsapp-instagram">📱 (98) 8471-1808</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="download-section">
+                <a href="#" class="download-btn" onclick="downloadCard('whatsapp-story', 'whatsapp')">Baixar PNG</a>
+                <a href="#" class="download-btn" onclick="downloadCard('whatsapp-story', 'whatsapp', 'jpg')">Baixar JPG</a>
+            </div>
+        </div>
+
+        <!-- Facebook Banner -->
+        <div class="card-section">
+            <h3>Facebook - Banner Horizontal (1200x630)</h3>
+            <div class="preview-container">
+                <div class="scale-container">
+                    <div class="facebook-banner" id="facebook-banner">
+                        <div class="banner-left">
+                            <div class="banner-logo">🏢</div>
+                            <h1 class="banner-title">MEGA LEILÃO</h1>
+                            <p class="banner-subtitle">Centro Comercial Fabril</p>
+                            <div class="banner-badge">⏰ 48 HORAS</div>
+                        </div>
+
+                        <div class="banner-right">
+                            <div class="banner-property">
+                                <span class="banner-property-name">PONTO INTERNO (15m²)</span>
+                                <span class="banner-property-price">R$ 800</span>
+                            </div>
+                            <div class="banner-property">
+                                <span class="banner-property-name">PONTO AVENIDA (30m²)</span>
+                                <span class="banner-property-price">R$ 1.300</span>
+                            </div>
+                            <div class="banner-property">
+                                <span class="banner-property-name">PONTO GRANDE (45m²)</span>
+                                <span class="banner-property-price">R$ 1.800</span>
+                            </div>
+
+                            <div class="banner-contact">
+                                <p class="banner-website">ccf-campanha.vercel.app</p>
+                                <p class="banner-whatsapp">📱 (98) 8471-1808</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="download-section">
+                <a href="#" class="download-btn" onclick="downloadCard('facebook-banner', 'facebook')">Baixar PNG</a>
+                <a href="#" class="download-btn" onclick="downloadCard('facebook-banner', 'facebook', 'jpg')">Baixar JPG</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function downloadCard(elementId, type, format = 'png') {
+            const element = document.getElementById(elementId);
+            
+            // Remover scale temporariamente para captura
+            const parent = element.parentElement;
+            const originalTransform = parent.style.transform;
+            parent.style.transform = 'scale(1)';
+            
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            }).then(canvas => {
+                // Restaurar scale
+                parent.style.transform = originalTransform;
+                
+                const link = document.createElement('a');
+                if (format === 'jpg') {
+                    // Criar canvas com fundo branco para JPG
+                    const jpgCanvas = document.createElement('canvas');
+                    const ctx = jpgCanvas.getContext('2d');
+                    jpgCanvas.width = canvas.width;
+                    jpgCanvas.height = canvas.height;
+                    
+                    // Fundo branco
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, jpgCanvas.width, jpgCanvas.height);
+                    
+                    // Desenhar imagem
+                    ctx.drawImage(canvas, 0, 0);
+                    
+                    link.href = jpgCanvas.toDataURL('image/jpeg', 0.95);
+                    link.download = `leilao-ccf-${type}.jpg`;
+                } else {
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = `leilao-ccf-${type}.png`;
+                }
+                
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
