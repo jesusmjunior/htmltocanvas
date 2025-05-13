@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversor Universal HTML para Imagem</title>
+    <title>Conversor HTML para Imagem - Versão Completa</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="converter.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -306,27 +305,6 @@
             margin: 0 auto;
         }
 
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            border: 3px solid #333;
-            border-top: 3px solid #00bfa5;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* Templates */
         .templates {
             background: #2d2d2d;
@@ -373,6 +351,27 @@
             color: #aaa;
         }
 
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #00bfa5;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Mensagens */
         .message {
             position: fixed;
@@ -409,17 +408,19 @@
             background: #2196f3;
         }
 
-        /* Código syntax highlighting básico */
-        .code-editor.html {
-            color: #e06c75;
+        /* Presets Section */
+        #preset-info {
+            background: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        .code-editor.css {
-            color: #56b6c2;
-        }
-
-        .code-editor.js {
-            color: #e5c07b;
+        #preset-info strong {
+            color: #00bfa5;
         }
     </style>
 </head>
@@ -449,6 +450,14 @@
                 <div class="template-card" onclick="loadTemplate('leilao')">
                     <div class="template-icon">🏢</div>
                     <div class="template-name">Leilão CCF</div>
+                </div>
+                <div class="template-card" onclick="loadTemplate('instagram')">
+                    <div class="template-icon">📷</div>
+                    <div class="template-name">Instagram Post</div>
+                </div>
+                <div class="template-card" onclick="loadTemplate('story')">
+                    <div class="template-icon">📱</div>
+                    <div class="template-name">Story/Status</div>
                 </div>
             </div>
         </div>
@@ -487,6 +496,28 @@
         <!-- Controles -->
         <div class="controls">
             <div class="controls-header">⚙️ Configurações de Exportação</div>
+            
+            <div class="control-group">
+                <label class="control-label">Preset de Tamanho</label>
+                <select id="preset-select" class="control-input" onchange="applyPreset(this.value)">
+                    <option value="instagram-post">Instagram Post (1080x1080)</option>
+                    <option value="instagram-story">Instagram Story (1080x1920)</option>
+                    <option value="facebook-post">Facebook Post (1200x628)</option>
+                    <option value="whatsapp-status">WhatsApp Status (1080x1920)</option>
+                    <option value="twitter-post">Twitter Post (1200x675)</option>
+                    <option value="linkedin-post">LinkedIn Post (1200x628)</option>
+                    <option value="youtube-thumb">YouTube Thumbnail (1280x720)</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+            
+            <div id="preset-info">
+                <strong>Instagram Post</strong><br>
+                Tamanho: 1080x1080px<br>
+                Escala: 2x<br>
+                Formato: PNG
+            </div>
+            
             <div class="control-row">
                 <div class="control-group">
                     <label class="control-label">Largura (px)</label>
@@ -535,24 +566,16 @@
     </div>
 
     <script>
-        let currentTab = 'html';
-        let generatedBlob = null;
-
         // Templates pré-definidos
         const templates = {
             simple: {
-                html: `<div style="padding: 20px; text-align: center;">
-    <h1>Olá Mundo!</h1>
-    <p>Este é um exemplo simples</p>
+                html: `<div style="padding: 40px; text-align: center; background: linear-gradient(45deg, #667eea, #764ba2); color: white;">
+    <h1 style="font-size: 3rem; margin-bottom: 20px;">Olá Mundo!</h1>
+    <p style="font-size: 1.5rem;">Este é um exemplo simples</p>
 </div>`,
                 css: `body {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
+    margin: 0;
     font-family: Arial, sans-serif;
-}
-h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
 }`,
                 js: ''
             },
@@ -562,23 +585,44 @@ h1 {
         <h2>Card Social</h2>
     </div>
     <div class="card-body">
-        <p>Conteúdo do card</p>
+        <p>Conteúdo do card para redes sociais</p>
+    </div>
+    <div class="card-footer">
+        <button>Saiba Mais</button>
     </div>
 </div>`,
                 css: `.card {
     width: 400px;
+    margin: 20px auto;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     overflow: hidden;
 }
 .card-header {
     background: #4CAF50;
     color: white;
     padding: 20px;
+    text-align: center;
 }
 .card-body {
+    padding: 30px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+.card-footer {
     padding: 20px;
+    text-align: center;
+    background: #f5f5f5;
+}
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
 }`,
                 js: ''
             },
@@ -594,17 +638,17 @@ h1 {
         <div class="item">
             <h3>PONTO INTERNO</h3>
             <p class="price">R$ 800</p>
-            <p class="size">45m²</p>
+            <p class="size">15m²</p>
         </div>
         <div class="item">
             <h3>PONTO AVENIDA</h3>
             <p class="price">R$ 1.300</p>
-            <p class="size">60m²</p>
+            <p class="size">30m²</p>
         </div>
         <div class="item">
             <h3>PONTO GRANDE</h3>
             <p class="price">R$ 1.800</p>
-            <p class="size">80m² + exp.</p>
+            <p class="size">45m² + exp.</p>
         </div>
     </div>
     <div class="footer">
@@ -680,11 +724,130 @@ h1 {
 }`,
                 js: ''
             },
+            instagram: {
+                html: `<div class="instagram-post">
+    <div class="post-header">
+        <h1>TÍTULO AQUI</h1>
+        <p>Subtítulo do post</p>
+    </div>
+    <div class="post-content">
+        <div class="icon">📷</div>
+        <p>Conteúdo principal do seu post do Instagram</p>
+    </div>
+    <div class="post-footer">
+        <p>@seuusuario</p>
+    </div>
+</div>`,
+                css: `.instagram-post {
+    width: 1080px;
+    height: 1080px;
+    background: linear-gradient(45deg, #405de6, #833ab4, #e1306c);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 80px;
+    font-family: Arial, sans-serif;
+}
+.post-header h1 {
+    font-size: 72px;
+    margin-bottom: 20px;
+}
+.post-content {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.icon {
+    font-size: 120px;
+    margin-bottom: 30px;
+}
+.post-content p {
+    font-size: 36px;
+    line-height: 1.4;
+}
+.post-footer {
+    text-align: center;
+    font-size: 28px;
+    opacity: 0.8;
+}`,
+                js: ''
+            },
+            story: {
+                html: `<div class="story">
+    <div class="story-header">
+        <h1>STORY TITLE</h1>
+    </div>
+    <div class="story-content">
+        <div class="emoji">🎯</div>
+        <p>Conteúdo do seu story aqui</p>
+        <button>SWIPE UP</button>
+    </div>
+    <div class="story-footer">
+        <p>@username</p>
+    </div>
+</div>`,
+                css: `.story {
+    width: 1080px;
+    height: 1920px;
+    background: linear-gradient(to bottom, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 100px 60px;
+    font-family: Arial, sans-serif;
+}
+.story-header h1 {
+    font-size: 84px;
+    text-align: center;
+    margin-bottom: 50px;
+}
+.story-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.emoji {
+    font-size: 150px;
+    margin-bottom: 40px;
+}
+.story-content p {
+    font-size: 48px;
+    line-height: 1.4;
+    margin-bottom: 50px;
+}
+button {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 25px 60px;
+    border-radius: 50px;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.story-footer {
+    text-align: center;
+    font-size: 32px;
+    opacity: 0.8;
+}`,
+                js: ''
+            },
             banner: {
                 html: `<div class="banner">
-    <h1>Seu Banner Aqui</h1>
-    <p>Subtítulo do banner</p>
-    <button>Call to Action</button>
+    <div class="banner-left">
+        <h1>Título do Banner</h1>
+        <p>Descrição do seu conteúdo</p>
+        <button>Call to Action</button>
+    </div>
+    <div class="banner-right">
+        <div class="icon">🎨</div>
+    </div>
 </div>`,
                 css: `.banner {
     width: 1200px;
@@ -692,32 +855,58 @@ h1 {
     background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
     color: white;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    padding: 60px;
     font-family: Arial, sans-serif;
 }
-h1 {
+.banner-left {
+    flex: 1;
+}
+.banner-left h1 {
     font-size: 64px;
     margin-bottom: 20px;
 }
-p {
+.banner-left p {
     font-size: 24px;
     margin-bottom: 30px;
 }
 button {
     background: white;
-    color: #333;
+    color: #FF6B6B;
     border: none;
     padding: 15px 40px;
     font-size: 20px;
     border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
+}
+.banner-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.icon {
+    font-size: 200px;
 }`,
                 js: ''
             }
         };
+
+        // Presets de tamanho
+        const presets = {
+            'instagram-post': { width: 1080, height: 1080, scale: 2 },
+            'instagram-story': { width: 1080, height: 1920, scale: 2 },
+            'facebook-post': { width: 1200, height: 628, scale: 2 },
+            'whatsapp-status': { width: 1080, height: 1920, scale: 2 },
+            'twitter-post': { width: 1200, height: 675, scale: 2 },
+            'linkedin-post': { width: 1200, height: 628, scale: 2 },
+            'youtube-thumb': { width: 1280, height: 720, scale: 2 },
+            'custom': { width: 1920, height: 1080, scale: 2 }
+        };
+
+        let currentTab = 'html';
+        let generatedBlob = null;
 
         // Carregar template
         function loadTemplate(templateName) {
@@ -727,7 +916,26 @@ button {
                 document.getElementById('css-editor').value = template.css;
                 document.getElementById('js-editor').value = template.js;
                 updatePreview();
-                showMessage('Template carregado com sucesso!', 'success');
+                showMessage('Template carregado!', 'success');
+            }
+        }
+
+        // Aplicar preset
+        function applyPreset(presetName) {
+            const preset = presets[presetName];
+            if (preset) {
+                document.getElementById('canvas-width').value = preset.width;
+                document.getElementById('canvas-height').value = preset.height;
+                document.getElementById('canvas-scale').value = preset.scale;
+                
+                // Atualizar info
+                const info = document.getElementById('preset-info');
+                info.innerHTML = `
+                    <strong>${presetName.replace('-', ' ').toUpperCase()}</strong><br>
+                    Tamanho: ${preset.width}x${preset.height}px<br>
+                    Escala: ${preset.scale}x<br>
+                    Formato: PNG
+                `;
             }
         }
 
@@ -763,7 +971,6 @@ button {
                         body {
                             margin: 0;
                             padding: 0;
-                            overflow: hidden;
                         }
                         ${css}
                     </style>
